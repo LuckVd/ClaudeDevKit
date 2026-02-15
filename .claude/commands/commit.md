@@ -48,13 +48,47 @@ Python       → ruff check . / flake8 / black --check .
 | Breaking Change | 输出 API Change Proposal，等待确认 |
 | Non-Breaking | 允许继续，提示更新文档 |
 
-### 4. Stage
+### 4. 调用 goal-tracker Skill
+
+检查当前目标进度，询问用户目标是否完成：
+
+**详见**: `.claude/skills/goal-tracker.md`
+
+| 目标状态 | 动作 |
+|----------|------|
+| `in_progress` | 输出目标完成询问 |
+| `completed` | 提示设置新目标 |
+| `blocked` | 输出阻塞原因 |
+
+**目标完成询问格式**:
+
+```
+📌 Goal Progress Check
+
+Current Goal: <任务描述>
+Status: in_progress
+Created: <创建日期>
+Progress: <提交次数> commits
+
+Changes to commit:
+- <变更文件列表>
+
+Is this goal completed?
+[ ] Yes - Mark as completed
+[ ] No - Continue tracking
+```
+
+**用户确认后**:
+- 完成 → 更新 `docs/CURRENT_GOAL.md` 状态为 `completed` → 询问下一个目标
+- 未完成 → 追加进度记录到 PROJECT.md → 继续提交流程
+
+### 5. Stage
 
 ```
 git add <files>
 ```
 
-### 5. 生成 Commit Message
+### 6. 生成 Commit Message
 
 分析 `git diff --cached`，按 Conventional Commits 生成：
 
@@ -82,13 +116,13 @@ git add <files>
 
 **Breaking Change：** 使用 `!` 或 footer `BREAKING CHANGE:`
 
-### 6. 执行 Commit
+### 7. 执行 Commit
 
 ```
 git commit
 ```
 
-### 7. 自动更新 PROJECT.md
+### 8. 自动更新 PROJECT.md
 
 提交成功后，更新 `.claude/PROJECT.md`：
 
@@ -121,7 +155,7 @@ API Change Detected:
 - Remember to update API documentation
 ```
 
-### 8. Push
+### 9. Push
 
 ```
 git push
@@ -159,6 +193,21 @@ git push
 - Breaking Change → API Change Proposal → 等待确认
 - Non-Breaking → 允许执行，提示更新文档
 
+### goal-tracker 调用
+
+**触发**: 所有提交
+
+**执行**:
+1. 读取 `docs/CURRENT_GOAL.md`
+2. 检查目标状态
+3. 输出目标完成询问
+4. 根据用户回答更新状态
+
+**输出**:
+- in_progress → 目标完成询问 → 等待确认
+- completed → 提示设置新目标
+- blocked → 输出阻塞原因
+
 ---
 
 ## 流程图
@@ -188,25 +237,32 @@ git push
          │ OK
          ▼
 ┌──────────────────┐
-│ 4. Stage         │
+│ 4. goal-tracker  │
+│    Skill         │── completed ──→ 💡 Prompt new goal
+│                  │
+└────────┬─────────┘
+         │ in_progress
+         ▼
+┌──────────────────┐
+│ 5. Stage         │
 └────────┬─────────┘
          ▼
 ┌──────────────────┐
-│ 5. Generate      │
+│ 6. Generate      │
 │    Commit Msg    │
 └────────┬─────────┘
          ▼
 ┌──────────────────┐
-│ 6. Commit        │
+│ 7. Commit        │
 └────────┬─────────┘
          ▼
 ┌──────────────────┐
-│ 7. Update        │
+│ 8. Update        │
 │    PROJECT.md    │
 └────────┬─────────┘
          ▼
 ┌──────────────────┐
-│ 8. Push          │
+│ 9. Push          │
 └──────────────────┘
 ```
 
@@ -223,6 +279,7 @@ Message: feat(auth): add user authentication
 Skills Executed:
 - workspace-governor: passed (active modules)
 - api-governor: skipped (no API changes)
+- goal-tracker: progress recorded (goal in progress)
 
 Updated:
 - .claude/PROJECT.md (history)
@@ -312,6 +369,8 @@ Confirm this Breaking Change? [y/N]
 - Lint 失败仍提交
 - 跳过保护检查（workspace-governor）
 - 跳过 API 变更检测（api-governor）
+- 跳过目标进度检查（goal-tracker）
 - 自动升级模块 Level
 - 覆盖历史记录
 - 忽略 Skills 输出
+- 未经确认修改目标状态

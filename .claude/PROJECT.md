@@ -37,7 +37,7 @@
 | 模块 | 路径 | Status | Level |
 |------|------|--------|-------|
 | claude-control | `.claude/**` | done | core |
-| governance-specs | `docs/WORKSPACE_SPEC.md`, `docs/api/**` | done | core |
+| governance-specs | `docs/api/**`, `docs/CURRENT_GOAL.md` | done | core |
 | project-docs | `docs/*.md`, `README.md` | todo | active |
 | backend-core | `backend/src/core/**` | todo | active |
 | backend-features | `backend/src/features/**` | todo | active |
@@ -97,3 +97,14 @@ API 文件变更时：
 3. **保护文件警告**
    - 条件：修改 `stable` 或 `core` 文件
    - 动作：输出提示，等待确认
+
+---
+
+## 当前目标
+
+> 当前开发目标独立维护，详见 `docs/CURRENT_GOAL.md`
+
+**快速操作：**
+- 查看目标：`/goal`
+- 设置目标：`/goal set <任务描述>`
+- 标记完成：`/goal done`
