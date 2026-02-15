@@ -150,14 +150,22 @@ Remember to update docs/api/API.md if behavior changed.
 
 ## 自动更新
 
-### 1. 更新 PROJECT.md 开发历史
+### 1. 更新状态文件
 
-在确认 API 变更后，追加记录：
+在确认 API 变更后，更新以下文件：
 
+**PROJECT.md 开发历史：**
 ```markdown
 | 日期 | Commit | 描述 |
 |------|--------|------|
 | 2026-02-15 | abc1234 | api: modify <endpoint> [BREAKING] |
+```
+
+**CURRENT_GOAL.md 进度记录：**
+```markdown
+| 时间 | 进展 |
+|------|------|
+| 2026-02-15 | api: modify <endpoint> [BREAKING] |
 ```
 
 ### 2. 提示更新 API 文档

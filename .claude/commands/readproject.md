@@ -26,12 +26,9 @@
 ## 执行流程
 
 1. 读取 `.claude/PROJECT.md`
-2. 读取 `docs/CURRENT_GOAL.md`
-3. 解析项目信息章节
-4. 解析模块定义章节
-5. 解析当前目标
-6. 解析开发历史章节
-7. 输出结构化项目概览
+2. 读取 `docs/ROADMAP.md`
+3. 读取 `docs/CURRENT_GOAL.md`
+4. 输出结构化项目概览
 
 ---
 
@@ -48,10 +45,12 @@ Description: Claude Code 开发模板套件
 | Module | Path | Status | Level |
 |--------|------|--------|-------|
 | claude-control | .claude/** | done | core |
-| governance-specs | docs/WORKSPACE_SPEC.md, docs/api/** | done | core |
-| project-docs | docs/*.md, README.md | todo | active |
-| backend-core | backend/src/core/** | todo | active |
 | backend-features | backend/src/features/** | dev | active |
+
+🗺️ Roadmap:
+Phase: Phase 1 - MVP
+Milestone: v0.5 内测版本 (in_progress)
+Focus: 用户认证系统
 
 📌 Current Goal:
 Task: 实现用户登录 API
@@ -59,20 +58,10 @@ Status: in_progress
 Priority: high
 Created: 2026-02-15
 
-Completion Criteria:
-- 登录 API 通过测试，返回正确 token
-
-Progress:
-| Time | Progress |
-|------|----------|
-| 2026-02-15 10:00 | Started implementation |
-| 2026-02-15 14:30 | Added login endpoint |
-
 📊 Recent History (last 3):
 | Date | Commit | Description |
 |------|--------|-------------|
 | 2026-02-15 | abc1234 | feat: add user authentication |
-| 2026-02-14 | def5678 | docs: update API documentation |
 
 💡 Ready to continue development!
 Focus on: 实现用户登录 API
@@ -156,7 +145,8 @@ Focus on: 实现用户登录 API
 |------|------|------|
 | Project | PROJECT.md 项目信息 | 名称、类型、描述 |
 | Modules | PROJECT.md 模块定义 | 路径、状态、保护等级 |
-| Current Goal | docs/CURRENT_GOAL.md | 任务、状态、进度 |
+| Roadmap | docs/ROADMAP.md | 阶段、里程碑、风险 |
+| Current Goal | docs/CURRENT_GOAL.md | 当前短期目标 |
 | Recent History | PROJECT.md 开发历史 | 最近 3 条提交记录 |
 
 ---

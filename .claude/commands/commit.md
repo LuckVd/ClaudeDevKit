@@ -1,6 +1,6 @@
 # `/commit` Command
 
-> Git 提交流程 + Skills 集成 + 自动更新 PROJECT.md
+> Git 提交流程 + Skills 集成 + 自动更新状态文件
 
 ---
 
@@ -122,11 +122,11 @@ git add <files>
 git commit
 ```
 
-### 8. 自动更新 PROJECT.md
+### 8. 自动更新状态文件
 
-提交成功后，更新 `.claude/PROJECT.md`：
+提交成功后，更新以下文件：
 
-1. **追加开发历史**
+**1. PROJECT.md — 追加开发历史**
 
 ```markdown
 | 日期 | Commit | 描述 |
@@ -134,7 +134,30 @@ git commit
 | 2026-02-15 | abc1234 | feat: add user authentication |
 ```
 
-2. **检测模块状态升级**
+**2. CURRENT_GOAL.md — 更新进度记录**
+
+```markdown
+## 进度记录
+
+| 时间 | 进展 |
+|------|------|
+| 2026-02-15 | 开始实现登录逻辑 |
+| 2026-02-15 14:30 | feat: add user authentication |
+```
+
+**3. ROADMAP.md — 同步当前焦点（如目标/阶段变化）**
+
+```markdown
+## 当前焦点
+
+| 字段 | 值 |
+|------|-----|
+| **阶段** | Phase 1 |
+| **目标** | 实现用户登录 API |
+| **重点模块** | backend-features |
+```
+
+**4. 检测模块状态升级**
 
 检查每个 `dev` 状态的模块：
 - 获取最近 3 次 commit 的变更文件列表
@@ -146,7 +169,7 @@ Module Upgrade Suggestion:
   Confirm upgrade? [y/N]
 ```
 
-3. **检测 API 变更**
+**5. 检测 API 变更**
 
 若变更涉及 `docs/api/**` 或 API 相关代码：
 ```
@@ -258,7 +281,9 @@ git push
          ▼
 ┌──────────────────┐
 │ 8. Update        │
-│    PROJECT.md    │
+│ - PROJECT.md     │
+│ - CURRENT_GOAL   │
+│ - ROADMAP.md     │
 └────────┬─────────┘
          ▼
 ┌──────────────────┐
@@ -283,6 +308,8 @@ Skills Executed:
 
 Updated:
 - .claude/PROJECT.md (history)
+- docs/CURRENT_GOAL.md (progress)
+- docs/ROADMAP.md (focus)
 
 Suggestions:
 - backend-core: consider upgrading to done/stable

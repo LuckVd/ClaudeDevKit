@@ -124,7 +124,7 @@ Is this goal completed?
 ```
 ✅ Goal Completed!
 
-Updated PROJECT.md:
+Updated docs/CURRENT_GOAL.md:
 - Status: in_progress → completed
 - Completed at: 2026-02-15
 
@@ -302,9 +302,12 @@ Related Modules:
    │
    ├──→ api-governor (检查 API 变更)
    │
-   ├──→ goal-tracker (检查目标进度)  ← 新增
+   ├──→ goal-tracker (检查目标进度)
    │
-   └──→ 执行提交 + 更新 PROJECT.md
+   └──→ 执行提交 + 更新状态文件
+        ├── PROJECT.md (开发历史)
+        ├── CURRENT_GOAL.md (进度记录)
+        └── ROADMAP.md (当前焦点)
 ```
 
 ---

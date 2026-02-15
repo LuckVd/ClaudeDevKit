@@ -179,10 +179,10 @@ Blocked Reason:
 Progress recorded. Use /goal unblock when resolved.
 ```
 
-**PROJECT.md 更新**:
+**CURRENT_GOAL.md 更新**:
 
 ```markdown
-### 目标信息
+## 目标信息
 
 | 字段 | 值 |
 |------|-----|
@@ -191,7 +191,7 @@ Progress recorded. Use /goal unblock when resolved.
 | **优先级** | high |
 | **创建日期** | 2026-02-15 |
 
-### 进度记录
+## 进度记录
 
 | 时间 | 进展 |
 |------|------|

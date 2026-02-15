@@ -10,6 +10,7 @@
 - [核心特性](#核心特性)
 - [目录结构](#目录结构)
 - [快速开始](#快速开始)
+- [使用示例](#使用示例)
 - [核心文件](#核心文件)
 - [文件等级保护](#文件等级保护)
 - [命令系统](#命令系统)
@@ -75,6 +76,7 @@ ClaudeDevKit/
 ├── deploy/                       # 部署配置
 │
 ├── docs/
+│   ├── ROADMAP.md                # 项目路线图
 │   ├── CURRENT_GOAL.md           # 当前开发目标
 │   └── api/
 │       └── API.md                # API 文档（可选）
@@ -133,19 +135,339 @@ cd my-project
 
 ---
 
+## 使用示例
+
+### 完整初始化流程
+
+**Step 1: 复制模板**
+
+```bash
+cp -r ClaudeDevKit/.claude my-project/
+cp -r ClaudeDevKit/docs my-project/
+cd my-project
+git init
+```
+
+**Step 2: 配置 PROJECT.md**
+
+```markdown
+## 项目信息
+
+| 字段 | 值 |
+|------|-----|
+| **名称** | my-blog |
+| **类型** | fullstack |
+| **描述** | 个人博客系统 |
+
+## 模块列表
+
+| 模块 | 路径 | Status | Level |
+|------|------|--------|-------|
+| auth | `src/auth/**` | dev | active |
+| posts | `src/posts/**` | todo | active |
+| comments | `src/comments/**` | todo | active |
+| core | `src/core/**` | done | stable |
+```
+
+**Step 3: 配置 ROADMAP.md**
+
+```markdown
+## 项目概览
+
+| 字段 | 值 |
+|------|-----|
+| **名称** | my-blog |
+| **类型** | fullstack |
+| **描述** | 个人博客系统 |
+| **技术栈** | Node.js + React + PostgreSQL |
+
+## 开发阶段
+
+| 阶段 | 目标 | 状态 | 预计完成 |
+|------|------|------|----------|
+| Phase 1 | 用户认证系统 | in_progress | 2026-03-01 |
+| Phase 2 | 文章管理 | todo | 2026-03-15 |
+| Phase 3 | 评论系统 | todo | 2026-04-01 |
+
+## 里程碑
+
+| 里程碑 | 交付物 | 状态 | 日期 |
+|--------|--------|------|------|
+| v0.1 | 登录注册 | in_progress | 2026-03-01 |
+| v0.5 | 完整博客 | todo | 2026-04-01 |
+| v1.0 | 正式发布 | todo | 2026-05-01 |
+```
+
+**Step 4: 配置 CURRENT_GOAL.md**
+
+```markdown
+## 目标信息
+
+| 字段 | 值 |
+|------|-----|
+| **任务** | 实现用户登录 API |
+| **状态** | in_progress |
+| **优先级** | high |
+| **创建日期** | 2026-02-15 |
+
+## 完成标准
+
+- POST /api/login 返回 JWT token
+- 单元测试通过
+- API 文档更新
+
+## 关联模块
+
+- `auth`
+
+## 进度记录
+
+| 时间 | 进展 |
+|------|------|
+| - | （自动追加） |
+```
+
+---
+
+### Day 1: 开始新功能开发
+
+```bash
+# 1. 打开 Claude Code，新会话开始
+
+# 2. 执行项目概览
+> /readproject
+
+# AI 输出：
+📋 Project Overview
+
+Project: my-blog
+Type: fullstack
+Description: 个人博客系统
+
+📂 Modules:
+| Module | Path | Status | Level |
+|--------|------|--------|-------|
+| auth | src/auth/** | dev | active |
+| posts | src/posts/** | todo | active |
+
+🗺️ Roadmap:
+Phase: Phase 1 - 用户认证系统
+Milestone: v0.1 登录注册 (in_progress)
+
+📌 Current Goal:
+Task: 实现用户登录 API
+Status: in_progress
+Priority: high
+Created: 2026-02-15
+
+💡 Ready to continue development!
+Focus on: 实现用户登录 API
+
+# 3. 开始开发（正常对话）
+> 帮我实现用户登录 API，使用 JWT 认证
+
+# AI 开始编写代码...
+
+# 4. 提交代码
+> /commit
+
+# AI 执行提交流程：
+✅ Lint Check: Passed
+✅ workspace-governor: passed (active modules)
+✅ api-governor: skipped (no API changes)
+
+📌 Goal Progress Check
+Current Goal: 实现用户登录 API
+Progress: 1 commit
+
+Is this goal completed? [y/N]
+> N
+
+✅ Commit Successful
+Commit: a1b2c3d
+Message: feat(auth): implement login API with JWT
+
+Updated:
+- .claude/PROJECT.md (history)
+- docs/CURRENT_GOAL.md (progress)
+- docs/ROADMAP.md (focus)
+
+Push: Success
+
+# 5. 继续开发...
+> 添加登录 API 的单元测试
+
+# 6. 再次提交
+> /commit
+# ... 选择 Y 表示目标完成
+
+# AI 输出：
+✅ Goal Completed!
+What's your next goal?
+> 实现用户注册 API
+
+# 7. 设置新目标
+> /goal set 实现用户注册 API
+
+✅ New Goal Set
+Goal: 实现用户注册 API
+Status: in_progress
+```
+
+---
+
+### Day 2: 继续开发
+
+```bash
+# 1. 新会话，恢复上下文
+> /readproject
+
+# AI 输出项目状态，包括昨天的提交历史...
+
+# 2. 确认当前目标
+> /goal
+
+📌 Current Goal
+Task: 实现用户注册 API
+Status: in_progress
+Created: 2026-02-16
+
+Progress:
+| Time | Progress |
+|------|----------|
+| 2026-02-16 | 目标已创建 |
+
+# 3. 继续开发...
+
+# 4. 如果遇到阻塞
+> /goal block 等待数据库表结构设计
+
+🚧 Goal Blocked
+Goal: 实现用户注册 API
+Status: in_progress → blocked
+
+Blocked Reason:
+- 等待数据库表结构设计
+
+# 5. 阻塞解除后
+> /goal unblock
+
+✅ Goal Unblocked
+Goal: 实现用户注册 API
+Status: blocked → in_progress
+```
+
+---
+
+### 常见场景
+
+**场景 1: 只想分析代码，不修改**
+
+```bash
+> /ask 这个项目的认证流程是怎样的？
+
+# AI 只读分析，不会修改任何文件
+```
+
+**场景 2: 查看项目整体进度**
+
+```bash
+> /readproject
+
+# 输出完整的项目状态
+```
+
+**场景 3: 修改了 core 文件被阻止**
+
+```bash
+> /commit
+
+⛔ Core Protection Warning
+Module: claude-control
+Level: core
+Files: .claude/PROJECT.md
+
+To modify:
+1. Manually edit .claude/PROJECT.md
+2. Change module level: core → stable
+3. Re-run /commit
+
+# 需要手动降级后再提交
+```
+
+**场景 4: API Breaking Change 检测**
+
+```bash
+> /commit
+
+⚠️ API Change Proposal
+Breaking Change Detected!
+
+Affected Endpoint: POST /api/login
+Changes: 删除了 username 参数
+
+Confirm this Breaking Change? [y/N]
+> N
+
+# 提交被取消，需要重新考虑变更
+```
+
+---
+
+### 工作流总结
+
+```
+┌─────────────────────────────────────────────────────────┐
+│  新会话                                                  │
+│      │                                                  │
+│      ▼                                                  │
+│  /readproject ───→ AI 了解项目状态                       │
+│      │                                                  │
+│      ▼                                                  │
+│  /goal ───→ 确认/设置目标                                │
+│      │                                                  │
+│      ▼                                                  │
+│  开发工作...                                             │
+│      │                                                  │
+│      ▼                                                  │
+│  /commit ───→ 提交 + 更新状态 + 检查目标                 │
+│      │                                                  │
+│      ▼                                                  │
+│  /goal done ───→ 完成目标，设置下一个                    │
+└─────────────────────────────────────────────────────────┘
+```
+
+---
+
 ## 核心文件
 
 ### 1. PROJECT.md
 
-**唯一配置文档**，包含：
+**项目配置文档**，包含：
 
 - 项目信息（名称、类型、描述）
 - 模块定义（路径、状态、等级）
 - 保护规则（文件保护、API保护）
-- 当前目标（任务、状态、进度）
 - 开发历史（自动追加）
 
-### 2. commands/commit.md
+### 2. CURRENT_GOAL.md
+
+**当前目标文档**，包含：
+
+- 目标信息（任务、状态、优先级）
+- 完成标准
+- 进度记录
+
+### 3. ROADMAP.md
+
+**项目路线图**，包含：
+
+- 项目概览（技术栈、目录结构）
+- 开发阶段规划
+- 里程碑
+- 风险与依赖
+
+### 4. commands/commit.md
 
 **Git 提交流程**：
 
@@ -153,17 +475,17 @@ cd my-project
 2. 检查保护文件（stable/core）
 3. 生成 Commit Message（Conventional Commits）
 4. 执行 Commit
-5. **自动更新 PROJECT.md**
+5. **自动更新状态文件**
 6. Push
 
-### 3. commands/ask.md
+### 5. commands/ask.md
 
 **只读问答模式**：
 
 - 禁止修改、创建、删除文件
 - 用于代码分析、架构理解、Bug 分析
 
-### 4. commands/goal.md
+### 6. commands/goal.md
 
 **目标管理模式**：
 
@@ -171,7 +493,7 @@ cd my-project
 - 单一焦点模式（一次一个主目标）
 - 提交时自动询问目标进度
 
-### 5. commands/readproject.md
+### 7. commands/readproject.md
 
 **项目概览模式**：
 
@@ -265,7 +587,7 @@ cd my-project
 4. 目标进度检查
 5. 生成 Conventional Commit
 6. 提交
-7. 自动更新 PROJECT.md
+7. 更新状态文件（PROJECT.md / CURRENT_GOAL.md / ROADMAP.md）
 8. Push
 
 ### /goal — 目标管理
@@ -336,7 +658,10 @@ Skills 是可复用的治理模块，被 `/commit` 命令调用执行保护逻�
    │
    ├──→ goal-tracker (检查目标进度)
    │
-   └──→ 执行提交 + 更新 PROJECT.md
+   └──→ 执行提交 + 更新状态文件
+        ├── PROJECT.md (开发历史)
+        ├── CURRENT_GOAL.md (进度记录)
+        └── ROADMAP.md (当前焦点)
 ```
 
 ---

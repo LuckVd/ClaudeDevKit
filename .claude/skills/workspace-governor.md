@@ -271,7 +271,7 @@ Consider:
 3. Stage
 4. 生成 Commit Message
 5. 执行 Commit
-6. 自动更新 PROJECT.md
+6. 更新状态文件 (PROJECT.md / CURRENT_GOAL.md / ROADMAP.md)
 7. Push
 ```
 
