@@ -40,11 +40,10 @@
 | governance-specs | `docs/api/**`, `docs/CURRENT_GOAL.md`, `docs/ROADMAP.md` | done | core |
 | git-history | `docs/git/**` | done | stable |
 | project-docs | `docs/*.md`, `README.md` | todo | active |
-| backend-core | `backend/src/core/**` | todo | active |
-| backend-features | `backend/src/features/**` | todo | active |
-| frontend-core | `frontend/src/core/**` | todo | active |
-| frontend-features | `frontend/src/features/**` | todo | active |
-| deployment | `deploy/**` | todo | active |
+| src-core | `src/core/**` | todo | active |
+| src-features | `src/features/**` | todo | active |
+
+> 根据实际项目调整模块路径和名称
 
 ---
 
