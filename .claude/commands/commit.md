@@ -4,6 +4,49 @@
 
 ---
 
+## ⚠️ 核心规则（必须遵守）
+
+### 1. 唯一提交入口
+
+**只有用户执行 `/commit` 命令时才能执行 `git commit`。**
+
+- ❌ 禁止在其他任何时候手动执行 `git commit`
+- ❌ 禁止在代码编写完成后自动提交
+- ❌ 禁止在修复问题后自动提交
+
+### 2. 单次提交原则
+
+**每次 `/commit` 只产生一个 commit。**
+
+所有变更（代码、文档、配置）必须在同一次提交中完成：
+- Stage 所有相关文件
+- 执行一次 `git commit`
+- 更新所有状态文件后 amend 到同一个 commit（可选）
+
+### 3. 失败处理
+
+**当 `/commit` 流程中任何步骤失败时：**
+
+```
+❌ Commit Failed
+
+Step: <失败步骤名称>
+Reason: <失败原因>
+
+How would you like to proceed?
+[ ] Retry - 重试当前步骤
+[ ] Skip - 跳过当前步骤（如果安全）
+[ ] Abort - 取消整个提交流程
+[ ] Manual - 我将手动处理，请告诉我需要做什么
+```
+
+**禁止行为：**
+- ❌ 失败后静默跳过
+- ❌ 失败后手动执行 git commit
+- ❌ 失败后不告知用户
+
+---
+
 ## 执行流程
 
 ### 1. Pre-commit 检查
@@ -13,55 +56,12 @@
 ```
 package.json → npm run lint / pnpm lint / yarn lint
 Makefile     → make lint
-Python + uv  → uv run ruff check . / uv run flake8 / uv run black --check .
 Python       → ruff check . / flake8 / black --check .
 ```
 
-**Python 环境优先级**：
-- 存在 `uv.lock` 或 `.venv/` 时，优先使用 `uv run` 执行命令
-- 示例：`uv run ruff check .` 而非 `ruff check .`
-
 - Lint 失败 → 停止流程，输出错误
 
-### 2. 清理临时文件
-
-在提交前，检测并删除与项目本身无关的临时文件：
-
-**需要删除的临时文件类型**：
-
-| 类型 | 模式 | 示例 |
-|------|------|------|
-| 缓存文件 | `**/__pycache__/`, `**/*.pyc`, `.pytest_cache/` | Python 缓存 |
-| 构建产物 | `**/dist/`, `**/build/`, `**/*.egg-info/` | 构建输出 |
-| 临时报告 | `**/coverage-report/`, `**/.coverage`, `**/htmlcov/` | 测试报告 |
-| 日志文件 | `**/*.log`, `**/logs/*.log` | 运行日志 |
-| 临时文件 | `**/*.tmp`, `**/*.temp`, `**/*.swp` | 编辑器临时文件 |
-| IDE 文件 | `**/.idea/`, `**/.vscode/` (可选保留) | IDE 配置 |
-
-**执行步骤**：
-1. 扫描项目目录，识别上述临时文件
-2. 输出待删除列表供确认
-3. 用户确认后删除
-4. 从 Git 跟踪中移除（如已跟踪）
-
-**输出格式**：
-```
-🧹 Temporary Files Cleanup
-
-Found temporary files:
-- __pycache__/ (15 files)
-- .pytest_cache/ (3 files)
-- coverage-report/ (8 files)
-
-Delete these files before commit? [Y/n]
-```
-
-**注意**：
-- 不要删除 `.gitignore` 中未忽略但项目需要的文件
-- 保留 `.env.example` 等示例文件
-- 保留测试数据文件（如 `tests/fixtures/`）
-
-### 3. 调用 workspace-governor Skill
+### 2. 调用 workspace-governor Skill
 
 读取 `.claude/PROJECT.md`，执行文件保护检查：
 
@@ -73,7 +73,7 @@ Delete these files before commit? [Y/n]
 | `stable` | 输出 Stability Modification Proposal，等待确认 |
 | `active` | 允许继续 |
 
-### 4. 调用 api-governor Skill（如涉及 API 文件）
+### 3. 调用 api-governor Skill（如涉及 API 文件）
 
 若变更涉及 API 相关文件，执行 Breaking Change 检测：
 
@@ -91,7 +91,7 @@ Delete these files before commit? [Y/n]
 | Breaking Change | 输出 API Change Proposal，等待确认 |
 | Non-Breaking | 允许继续，提示更新文档 |
 
-### 5. 调用 goal-tracker Skill
+### 4. 调用 goal-tracker Skill
 
 检查当前目标进度，询问用户目标是否完成：
 
@@ -125,13 +125,13 @@ Is this goal completed?
 - 完成 → 更新 `docs/CURRENT_GOAL.md` 状态为 `completed` → 询问下一个目标
 - 未完成 → 追加进度记录到 PROJECT.md → 继续提交流程
 
-### 6. Stage
+### 5. Stage
 
 ```
 git add <files>
 ```
 
-### 7. 生成 Commit Message
+### 6. 生成 Commit Message
 
 分析 `git diff --cached`，按 Conventional Commits 生成：
 
@@ -157,63 +157,15 @@ git add <files>
 - `deps` - 依赖
 - `config` - 配置
 
-**Breaking Change：** 使用 `!` 或 footer `BREAKING CHANGE:`
+**Breaking Change：** 使用感叹号或 footer 中的 BREAKING CHANGE 声明
 
-**Commit Message 内容要求**：
-
-commit message 的 body 部分必须包含从上次 commit 到本次的所有变更内容：
-
-```markdown
-## 变更内容
-
-### 新增
-- <新增的功能/文件>
-
-### 修改
-- <修改的内容>
-
-### 删除
-- <删除的内容>
-
-### 修复
-- <修复的问题>
-```
-
-**生成步骤**：
-1. 执行 `git log -1 --pretty=%B HEAD` 获取上次 commit message
-2. 执行 `git diff HEAD~1..HEAD --stat` 获取变更统计
-3. 执行 `git diff HEAD~1..HEAD` 分析具体变更内容
-4. 汇总所有变更，生成完整的 commit message body
-
-**示例**：
-
-```
-feat(auth): 实现用户认证模块
-
-## 变更内容
-
-### 新增
-- src/auth/login.py: 用户登录逻辑
-- src/auth/token.py: JWT token 生成与验证
-- tests/test_auth.py: 认证模块单元测试
-
-### 修改
-- src/config.py: 添加 JWT 配置项
-- requirements.txt: 添加 pyjwt 依赖
-
-### 删除
-- src/deprecated/auth_old.py: 移除旧认证实现
-
-Co-Authored-By: Claude <noreply@anthropic.com>
-```
-
-### 8. 执行 Commit
+### 7. 执行 Commit
 
 ```
 git commit
 ```
 
-### 9. 自动更新状态文件
+### 8. 自动更新状态文件
 
 提交成功后，更新以下文件：
 
@@ -269,7 +221,7 @@ API Change Detected:
 - Remember to update API documentation
 ```
 
-### 10. 更新 Git 历史记录
+### 9. 更新 Git 历史记录
 
 提交成功后，更新 Git 历史文档系统：
 
@@ -354,7 +306,7 @@ API Change Detected:
 | 目标信息 | `docs/CURRENT_GOAL.md` | 关联目标 |
 | 时间戳 | 系统时间 | 记录时间 |
 
-### 11. Push
+### 10. Push
 
 ```
 git push
@@ -413,70 +365,64 @@ git push
 
 ```
 /commit
-   |
-   v
-+------------------+
-| 1. Lint Check    | -- Fail --> Stop
-+--------+---------+
-         | Pass
-         v
-+------------------+
-| 2. Cleanup       | -- Cancel --> Stop
-|    Temp Files    |
-+--------+---------+
-         | Confirm
-         v
-+------------------+
-| 3. workspace-    |
-|    governor      | -- core -----> [X] Block
-|    Skill         |
-+--------+---------+
-         | stable --> [!] Wait Confirm
-         | active
-         v
-+------------------+
-| 4. api-governor  |
-|    Skill         | -- Breaking -> [!] Wait Confirm
-| (if API files)   |
-+--------+---------+
-         | OK
-         v
-+------------------+
-| 5. goal-tracker  |
-|    Skill         | -- completed -> [?] Prompt new goal
-|                  |
-+--------+---------+
-         | in_progress
-         v
-+------------------+
-| 6. Stage         |
-+--------+---------+
-         v
-+------------------+
-| 7. Generate      |
-|    Commit Msg    |
-+--------+---------+
-         v
-+------------------+
-| 8. Commit        |
-+--------+---------+
-         v
-+------------------+
-| 9. Update        |
-| - PROJECT.md     |
-| - CURRENT_GOAL   |
-| - ROADMAP.md     |
-+--------+---------+
-         v
-+------------------+
-| 10. Git History  |
-| - history.md     |
-| - logs/          |
-+--------+---------+
-         v
-+------------------+
-| 11. Push         |
-+------------------+
+   │
+   ▼
+┌──────────────────┐
+│ 1. Lint Check    │── Fail ──→ Stop
+└────────┬─────────┘
+         │ Pass
+         ▼
+┌──────────────────┐
+│ 2. workspace-    │
+│    governor      │── core ────→ ⛔ Block
+│    Skill         │
+└────────┬─────────┘
+         │ stable ──→ ⚠️ Wait Confirm
+         │ active
+         ▼
+┌──────────────────┐
+│ 3. api-governor  │
+│    Skill         │── Breaking ──→ ⚠️ Wait Confirm
+│ (if API files)   │
+└────────┬─────────┘
+         │ OK
+         ▼
+┌──────────────────┐
+│ 4. goal-tracker  │
+│    Skill         │── completed ──→ 💡 Prompt new goal
+│                  │
+└────────┬─────────┘
+         │ in_progress
+         ▼
+┌──────────────────┐
+│ 5. Stage         │
+└────────┬─────────┘
+         ▼
+┌──────────────────┐
+│ 6. Generate      │
+│    Commit Msg    │
+└────────┬─────────┘
+         ▼
+┌──────────────────┐
+│ 7. Commit        │
+└────────┬─────────┘
+         ▼
+┌──────────────────┐
+│ 8. Update        │
+│ - PROJECT.md     │
+│ - CURRENT_GOAL   │
+│ - ROADMAP.md     │
+└────────┬─────────┘
+         ▼
+┌──────────────────┐
+│ 9. Git History   │
+│ - history.md     │
+│ - logs/详细日志  │
+└────────┬─────────┘
+         ▼
+┌──────────────────┐
+│ 10. Push         │
+└──────────────────┘
 ```
 
 ---
@@ -584,7 +530,6 @@ Confirm this Breaking Change? [y/N]
 ## 禁止行为
 
 - Lint 失败仍提交
-- 跳过清理临时文件步骤
 - 跳过保护检查（workspace-governor）
 - 跳过 API 变更检测（api-governor）
 - 跳过目标进度检查（goal-tracker）
@@ -592,5 +537,6 @@ Confirm this Breaking Change? [y/N]
 - 覆盖历史记录
 - 忽略 Skills 输出
 - 未经确认修改目标状态
-- 提交不完整的 commit message（必须包含所有变更内容）
-- 提交临时文件（缓存、日志、报告等）
+- **在 /commit 之外执行 git commit**
+- **一次 /commit 产生多个 commit**
+- **失败后不询问用户直接处理**
